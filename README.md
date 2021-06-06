@@ -78,7 +78,7 @@ Where:
 - δ<sub>i</sub> – an indicator variable for if an event occurred in the i’th observation.
 - X<sup>k</sup> –  the data matrix for the k’th view
 - w<sup>k</sup> – the coefficients for the k’th view (this is our decision variable)
-- R<sub>i</sub> – The risk set at time T_i (the time of the i’th event). This is the set of observations with event time (censored or otherwise) no less than T_i
+- R<sub>i</sub> – The risk set at time T<sub>i</sub> (the time of the i’th event). This is the set of observations with event time (censored or otherwise) no less than T<sub>i</sub>
 
 
 
