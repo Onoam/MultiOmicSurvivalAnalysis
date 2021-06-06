@@ -5,6 +5,7 @@ The data contains several genomic datasets for each of 8 types of cancers. Each 
 - MicroRNA expression 
 - Gene expression
 - DNA methylation
+
 We implement a baseline algorithm by concatenating all datasets and learning a survival analysis predictor on it. Then we implement a multi-view learning algorithm that takes the different distributions in each omic into consideration when learning.
 For task 3, we implement a transfer learning algorithm, for learning on multiple cancers and predicting on the data of just one.
 
