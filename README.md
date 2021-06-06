@@ -123,14 +123,15 @@ This problem is solved based on a series of values for λ, and the best one is s
 3. learned a transfer cox model for each cancer as the target domain while using the other 5 as source domain
 
 #### Results
-Cancer type/ model |	TransferCox  Transfer + top-500 variance features |	TransferCox + top-50 features from each cancer type	| CoxnetPH, Random search CV, Gradient Boosting feature selection
---- | --- | --- | ---
-BLCA	| 0.6	| 0.692 |	0.748
-BRCA	| 0.6	| 0.6006	| 0.62
-HNSC	| 0.58	| 0.684	| 0.71
-LAML	| 0.645	| 0.704	| 0.726
-LGG	| 0.844	| 0.88	| 0.91
-LUAD	| 0.66	| 0.648	| 0.69
+
+| Cancer type/ model |	TransferCox  Transfer + top-500 variance features |	TransferCox + top-50 features from each cancer type	| CoxnetPH, Random search CV, Gradient Boosting feature selection |
+| --- | --- | --- | --- |
+| BLCA	| 0.6	| 0.692 |	0.748 |
+| BRCA	| 0.6	| 0.6006	| 0.62 |
+| HNSC	| 0.58	| 0.684	| 0.71 |
+| LAML	| 0.645	| 0.704	| 0.726 |
+| LGG	| 0.844	| 0.88	| 0.91 |
+| LUAD	| 0.66	| 0.648	| 0.69 |
 
 
 #### Discussion
