@@ -43,12 +43,12 @@ Our gradient boosted model was trained and tested on the given folds:
 
 Type	| CV C-index
 ---  | ---
-brca	| 0.587
-blca	| 0.515
-hsnc	| 0.573
-laml	| 0.629
-lgg	| 0.885
-luad	| 0.521
+BRCA	| 0.587
+BLCA	| 0.515
+HNSC	| 0.573
+LAML	| 0.629
+LGG | 0.885
+LUAD	| 0.521
 
 #### Discussion
 - Cox-net baseline achieved fairly good results in very minimal learning time (~1-2 minutes)
