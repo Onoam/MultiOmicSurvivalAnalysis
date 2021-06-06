@@ -50,9 +50,13 @@ laml	| 0.629
 lgg	| 0.885
 luad	| 0.521
 
+#### Discussion
+- Cox-net baseline achieved fairly good results in very minimal learning time (~1-2 minutes)
+- Gradient boosting Feature selection performed a lot better than top variance feature selection
+
 
 ### Multi-view learning
-#### Resources: 
+Resources: 
 - Supervised graph clustering for cancer subtyping based on survival analysis and integration of multi-omic tumor data, [researchgate](https://www.researchgate.net/publication/343115618_Supervised_graph_clustering_for_cancer_subtyping_based_on_survival_analysis_and_integration_of_multi-omic_tumor_data)
 - A Co-Regularization Approach to Semi-supervised Learning with Multiple Views. [Link](http://web.cse.ohio-state.edu/~belkin.8/papers/CASSL_ICML_05.pdf)
 
@@ -80,12 +84,57 @@ Where:
 - w<sup>k</sup> – the coefficients for the k’th view (this is our decision variable)
 - R<sub>i</sub> – The risk set at time T<sub>i</sub> (the time of the i’th event). This is the set of observations with event time (censored or otherwise) no less than T<sub>i</sub>
 
+#### Implementation and iteration
+Unfortunately, the runtime for the optimization of this problem is not linear, and in high dimensions (hundreds of rows, tens of thousands of columns) appears intractable. As a first step, we formulated the problem for an arbitrary 100 columns per dataset. This appears to be close to the limit for our personal computers.
+This limit forced us to take iterative steps in refining the model without attempting intractable calculations.
+The steps of our implementation:
+1. Use an arbitrary subset of features.
+2. Use feature selection methods (detailed in the Feature Selection section) to choose the best features for the model.
+3. Use exhaustive grid search cross validation to find the best tuning parameters (l_1,l_2, and Co-Regularization parameter) for the model.
 
+#### Results
+Implemented naively in stage 1, our algorithm achieved a very low C-index (measured via cross-validation), around 0.5 with high variance between runs. This made the model not significantly better than random.
+The feature selection methods in the second step improved performance by a substantial amount, and the exhaustive grid search further improved the model. Both models were evaluated via cross-validation, using pre-determined folds given by course staff. Importantly, no training was done on the above folds (but rather on random split folds). 
+
+Type	| Feature selection only	| Feature selection and GridSearchCV	| Improvement |	Difference
+--- | --- | --- | --- | ---
+BLCA |	0.723	| 0.739496727| 	2%	|0.016497
+BRCA	| 0.524	| 0.608879573	| 16%	| 0.08488
+HNSC	| 0.653	| 0.687932068	| 5%	| 0.034932
+LAML	| 0.598	| 0.650616182	| 9%	| 0.052616
+LGG	| 0.881	| 0.874536493	| -1%	| -0.00646
+LUAD	| 0.707	| 0.740368616	| 5%	| 0.033369
+
+### Transfer Learning 
+Resources: 
+- 	Transfer learning for Survival Analysis via Efficient L2,1-norm Regularized Cox Regression [Link](http://dmkd.cs.vt.edu/papers/ICDM16a.pdf)).
+
+We implement a Transferred Learning approach, where the transferring happens between a source domain to a target domain, where the source and target are mutually exclusive. The source domain is a set of several cancer types (with all 3 omic data tables concatenated for each cancer type), and the target domain is the same data for a different, single cancer type.
+
+Therefore in this approach, we train a predictor with the weighted source and target domain, along with a penalty for coefficients for both:
+
+![image](https://user-images.githubusercontent.com/29016914/120921225-4dbfac80-c6cb-11eb-9033-c3d4c38cc357.png)
+
+This problem is solved based on a series of values for λ, and the best one is selected via Cross Validation. The initial λ is obtained via a warm-start approach: initialize it to be a sufficiently large number so that B goes to 0, and then gradually decrease λ. For a new λ, the initial value of B is the B estimated learned from the previous λ.
+
+#### Methodology 
+1. concatenated all the omics per each cancer type
+2. found top-k (500) variance-based features for the combined data from all cancer types 
+3. learned a transfer cox model for each cancer as the target domain while using the other 5 as source domain
+
+#### Results
+Cancer type/ model |	TransferCox  Transfer + top-500 variance features |	TransferCox + top-50 features from each cancer type	| CoxnetPH, Random search CV, Gradient Boosting feature selection
+--- | --- | --- | ---
+BLCA	| 0.6	| 0.692 |	0.748
+BRCA	| 0.6	| 0.6006	| 0.62
+HNSC	| 0.58	| 0.684	| 0.71
+LAML	| 0.645	| 0.704	| 0.726
+LGG	| 0.844	| 0.88	| 0.91
+LUAD	| 0.66	| 0.648	| 0.69
 
 
 #### Discussion
-- Cox-net baseline achieved fairly good results in very minimal learning time (~1-2 minutes)
-- Gradient boosting Feature selection performed a lot better than top variance feature selection
+This method proved to provide good initial results, in very bad timing (~2.5 hours for each cancer type, for the top 500  mutual features) with variance based feature selection. After feature selection via gradient boosted model, results were inferior results to CoxNetPH.
 
 
 ### Markdown
