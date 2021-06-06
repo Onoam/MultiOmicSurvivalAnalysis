@@ -10,7 +10,7 @@ We implement a baseline algorithm by concatenating all datasets and learning a s
 
 Finally, we implement a transfer learning algorithm, for learning on multiple cancers and predicting on the data of just one.
 
-##Feature selection 
+### Feature selection 
 Because most of our models are computationally expensive, we put emphasis on proper feature selection.
 
 As a first approach, we tried the “top-k variance” method, in which we kept the k features with highest variance within each omic (or in some cases, across all omics).  We chose k to be the highest value which still enabled reasonable computation time.
@@ -22,6 +22,48 @@ Next, we trained a gradient boosted Cox-PH model (using the Scikit Survive libra
 The added bonus of this method is that the model performs feature selection as part of its training (by only using a small subset of features for each learner), and gives “feature-importance” values at the end of the learning process. We used this list to select features for our other models, by choosing the k features with highest importance values.
 
 This method of selecting features yielded significantly improved results for all our models, as detailed in the next sections.
+
+### Baseline
+
+#### Methodology 
+For each cancer type, we trained a CoxNet model by the following algorithm:
+- Concatenate all three omics
+- Remove 0-variance columns, and keep only:
+  - Top-k most variance features 
+  - Top-k otherwise selected features 
+- Split data into 80% train, 20% holdout set
+- Train a simple CoxPH  model (while trying different α values for L1 penalty) to obtain some initial trying values for α
+-	For the top-k α values received in the previous step various L1/L2 penalty ratios:
+-	Perform Random Search CV with all possible combinations of {alphas}X{L1/L2 ratio} on a CoxNet model, and keep the best estimator found 
+-	Compute Cross Validation results for estimating C.I
+-	Compute C.I on the holdout set 
+
+#### Results 
+Our gradient boosted model was trained and tested on the given folds:
+
+Type	| CV C-index
+---  | ---
+brca	| 0.587
+blca	| 0.515
+hsnc	| 0.573
+laml	| 0.629
+lgg	| 0.885
+luad	| 0.521
+
+
+### Multi-view learning
+#### Resources: 
+•	Supervised graph clustering for cancer subtyping based on survival analysis and integration of multi-omic tumor data, researchgate
+•	A Co-Regularization Approach to Semi-supervised Learning with Multiple Views. Link
+We implement a multi-view learning approach, where each omic is a view. The simplest approach of concatenating the datasets ignores the different distributions in each omic, and may degrade performance. In the multi-view learning approach, two assumptions are utilized:
+•	Compatibility: A predictor from each view would predict similar target values for most examples, as those of all other predictors.
+•	Independence: The values of each view are independent (given the target value) of the value of all other views.
+Therefore in this approach, we train a predictor all views simultaneously, along with a regularization term and a special co-regularization term. Our loss function then becomes:
+
+#### Discussion
+- Cox-net baseline achieved fairly good results in very minimal learning time (~1-2 minutes)
+- Gradient boosting Feature selection performed a lot better than top variance feature selection
+
 
 ### Markdown
 
