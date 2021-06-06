@@ -1,5 +1,7 @@
 ## Multi Omic Survival Analysis
 Authors: [Matan Roet](https://github.com/matanro24), [Omer Noam](https://github.com/Onoam)
+
+Code: [github.com/Onoam/MultiOmicSurvivalAnalysis](https://github.com/Onoam/MultiOmicSurvivalAnalysis)
 ### Introduction
 For this project, we implement survival analysis algorithms for multi-omic cancer patient data from the TCGA dataset.
 The data contains several genomic datasets for each of 8 types of cancers. Each dataset is an omic:
