@@ -53,12 +53,35 @@ luad	| 0.521
 
 ### Multi-view learning
 #### Resources: 
-•	Supervised graph clustering for cancer subtyping based on survival analysis and integration of multi-omic tumor data, researchgate
-•	A Co-Regularization Approach to Semi-supervised Learning with Multiple Views. Link
+- Supervised graph clustering for cancer subtyping based on survival analysis and integration of multi-omic tumor data, [researchgate](https://www.researchgate.net/publication/343115618_Supervised_graph_clustering_for_cancer_subtyping_based_on_survival_analysis_and_integration_of_multi-omic_tumor_data)
+- A Co-Regularization Approach to Semi-supervised Learning with Multiple Views. [Link](http://web.cse.ohio-state.edu/~belkin.8/papers/CASSL_ICML_05.pdf)
+
 We implement a multi-view learning approach, where each omic is a view. The simplest approach of concatenating the datasets ignores the different distributions in each omic, and may degrade performance. In the multi-view learning approach, two assumptions are utilized:
-•	Compatibility: A predictor from each view would predict similar target values for most examples, as those of all other predictors.
-•	Independence: The values of each view are independent (given the target value) of the value of all other views.
+- Compatibility: A predictor from each view would predict similar target values for most examples, as those of all other predictors.
+- Independence: The values of each view are independent (given the target value) of the value of all other views.
+
 Therefore in this approach, we train a predictor all views simultaneously, along with a regularization term and a special co-regularization term. Our loss function then becomes:
+![image](https://user-images.githubusercontent.com/29016914/120920877-b6a62500-c6c9-11eb-9bcc-014f7844b7bd.png)
+
+Where:
+- m is the number of views.
+- L is the loss function.
+- C is the co-regularization term, which penalizes different incompatible predictions
+- R is the regularization terms
+- λ and η are regularization parameters
+
+In the case of the Cox proportional hazards model, our loss function will be the Cox partial likelihood term, and we use l_1 and l_2 norms for regularization (to promote sparsity) and co-regularization respectively:
+
+![image](https://user-images.githubusercontent.com/29016914/120920904-d63d4d80-c6c9-11eb-8092-4af86c7c45b9.png)
+
+Where:
+- δ<sub>i</sub> – an indicator variable for if an event occurred in the i’th observation.
+- X<sup>k</sup> –  the data matrix for the k’th view
+- w<sup>k</sup> – the coefficients for the k’th view (this is our decision variable)
+- R<sub>i</sub> – The risk set at time T_i (the time of the i’th event). This is the set of observations with event time (censored or otherwise) no less than T_i
+
+
+
 
 #### Discussion
 - Cox-net baseline achieved fairly good results in very minimal learning time (~1-2 minutes)
